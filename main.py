@@ -52,7 +52,7 @@ async def reply(
     # Store the conversation in the database
     try:
         conversation = Conversation(
-            sender=From,
+            sender=From.removeprefix("whatsapp:"),
             message=Body,
             response=chat_response,
         )
