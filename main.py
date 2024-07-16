@@ -12,7 +12,7 @@ from env import TWILIO_NUMBER
 
 # Internal imports
 from models import Conversation, SessionLocal
-from twilio import logger, send_message
+from wsp import logger, send_message
 
 app = FastAPI()
 
@@ -24,7 +24,7 @@ async def health() -> dict[str, str]:
 
 
 # Dependency
-def get_db() -> Generator[Session]:
+def get_db() -> Generator[Session, None, None]:
     """Get a database connection."""
     db = SessionLocal()
     try:
