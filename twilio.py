@@ -1,8 +1,9 @@
+"""Module to send messages using Twilio Messaging API."""
+
 import logging
 
-from twilio.rest import Client
-
 from env import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_NUMBER
+from twilio.rest import Client
 
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 

@@ -12,7 +12,7 @@ from env import TWILIO_NUMBER
 
 # Internal imports
 from models import Conversation, SessionLocal
-from utils import logger, send_message
+from twilio import logger, send_message
 
 app = FastAPI()
 

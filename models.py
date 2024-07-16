@@ -1,8 +1,10 @@
+"""Module for database models and session creation."""
+
 from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.engine import URL
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-from .env import PG_DATABASE, PG_HOST, PG_PASSWORD, PG_USER
+from env import PG_DATABASE, PG_HOST, PG_PASSWORD, PG_USER
 
 url = URL.create(
     drivername="postgresql",
@@ -19,6 +21,8 @@ Base = declarative_base()
 
 
 class Conversation(Base):
+    """Model for conversation table."""
+
     __tablename__ = "conversations"
 
     id = Column(Integer, primary_key=True, index=True)

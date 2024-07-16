@@ -27,11 +27,12 @@
             projectDir = self;
             python = pkgs.python312;
 
-            overrides = pkgs.poetry2nix.defaultPoetryOverrides.extend (final: prev: {
-              twilio-stubs = prev.twilio-stubs.overridePythonAttrs (old: {
-                buildInputs = (old.buildInputs or [ ]) ++ [ prev.setuptools ];
+            overrides = pkgs.poetry2nix.defaultPoetryOverrides.extend
+              (final: prev: {
+                twilio-stubs = prev.twilio-stubs.overridePythonAttrs (old: {
+                  buildInputs = (old.buildInputs or [ ]) ++ [ prev.setuptools ];
+                });
               });
-            });
 
           };
 
@@ -39,10 +40,11 @@
 
           packages = [
             poetryPkgs
+            # pkgs.ruff
             pkgs.poetry
 
           ];
-          LD_LIBRARY_PATH = "${pkgs.stdenv.cc.cc.lib}/lib";
+          # LD_LIBRARY_PATH = "${pkgs.stdenv.cc.cc.lib}/lib";
 
         };
     };
