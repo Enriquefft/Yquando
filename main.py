@@ -8,7 +8,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from ai import get_response
-from env import TWILIO_NUMBER
+from env import TO_NUMBER
 
 # Internal imports
 from models import Conversation, SessionLocal
@@ -46,7 +46,7 @@ async def reply(body: str = Form(), db: Session = Depends(get_db)) -> str:
     # Store the conversation in the database
     try:
         conversation = Conversation(
-            sender=TWILIO_NUMBER,
+            sender=TO_NUMBER,
             message=body,
             response=chat_response,
         )
@@ -56,5 +56,5 @@ async def reply(body: str = Form(), db: Session = Depends(get_db)) -> str:
     except SQLAlchemyError as e:
         db.rollback()
         logger.error(f"Error storing conversation in database: {e}")
-    send_message(TWILIO_NUMBER, chat_response)
+    send_message(TO_NUMBER, chat_response)
     return ""
