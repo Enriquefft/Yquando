@@ -1,15 +1,18 @@
+"""Main API module for the chatbot."""
+
 # ruff: noqa: B008
-# Third-party imports
+from typing import Generator
+
 from fastapi import Depends, FastAPI, Form
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from ai import get_response
+from env import TWILIO_NUMBER
+
 # Internal imports
 from models import Conversation, SessionLocal
-from env import TWILIO_NUMBER
 from utils import logger, send_message
-
-from ai import get_response
 
 app = FastAPI()
 
@@ -21,7 +24,8 @@ async def health() -> dict[str, str]:
 
 
 # Dependency
-def get_db():
+def get_db() -> Generator[Session]:
+    """Get a database connection."""
     db = SessionLocal()
     try:
         yield db
@@ -30,9 +34,10 @@ def get_db():
 
 
 @app.post("/message")
-async def reply(Body: str = Form(), db: Session = Depends(get_db)):
+async def reply(body: str = Form(), db: Session = Depends(get_db)) -> str:
+    """Reply to a whatsapp message from the user."""
     # The generated text
-    chat_response = get_response(Body)
+    chat_response = get_response(body)
 
     if chat_response is None:
         logger.error("Failed to get a response from the OpenAI API")
@@ -42,7 +47,7 @@ async def reply(Body: str = Form(), db: Session = Depends(get_db)):
     try:
         conversation = Conversation(
             sender=TWILIO_NUMBER,
-            message=Body,
+            message=body,
             response=chat_response,
         )
         db.add(conversation)
