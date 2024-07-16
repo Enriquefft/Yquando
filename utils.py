@@ -12,13 +12,14 @@ logger = logging.getLogger(__name__)
 
 
 # Sending message logic through Twilio Messaging API
-def send_message(to_number: str, body_text: str):
+def send_message(to_number: str, body_text: str) -> None:
+    """Send a message to a phone number using Twilio API."""
     try:
         message = client.messages.create(
             from_=f"whatsapp:{TWILIO_NUMBER}",
             body=body_text,
             to=f"whatsapp:{to_number}",
         )
-        logger.info(f"Message sent to {to_number}: {message.body}")
-    except Exception as e:
-        logger.error(f"Error sending message to {to_number}: {e}")
+        logger.info("Message sent to %s: %s", to_number, message.body)
+    except Exception:
+        logger.exception("Error sending message to %s", to_number)

@@ -1,18 +1,17 @@
 # ruff: noqa: B008
 # Third-party imports
-import openai
 from fastapi import Depends, FastAPI, Form
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 # Internal imports
 from models import Conversation, SessionLocal
-from env import OPENAI_API_KEY, TWILIO_NUMBER
+from env import TWILIO_NUMBER
 from utils import logger, send_message
 
+from ai import get_response
+
 app = FastAPI()
-# Set up the OpenAI API client
-openai.api_key = OPENAI_API_KEY
 
 
 @app.get("/health")
@@ -32,18 +31,12 @@ def get_db():
 
 @app.post("/message")
 async def reply(Body: str = Form(), db: Session = Depends(get_db)):
-    # Call the OpenAI API to generate text with GPT-3.5
-    response = openai.Completion.create(
-        engine="text-davinci-002",
-        prompt=Body,
-        max_tokens=200,
-        n=1,
-        stop=None,
-        temperature=0.5,
-    )
-
     # The generated text
-    chat_response = response.choices[0].text.strip()
+    chat_response = get_response(Body)
+
+    if chat_response is None:
+        logger.error("Failed to get a response from the OpenAI API")
+        return ""
 
     # Store the conversation in the database
     try:
