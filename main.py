@@ -3,14 +3,11 @@
 # ruff: noqa: B008
 from typing import Generator
 
-from fastapi import Depends, FastAPI, Form, Request, status
-from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi import Depends, FastAPI, Form
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from ai import get_response
-from env import TO_NUMBER
 
 # Internal imports
 from models import Conversation, SessionLocal
@@ -36,10 +33,17 @@ def get_db() -> Generator[Session, None, None]:
 
 
 @app.post("/message")
-async def reply(Body: str = Form(), db: Session = Depends(get_db)) -> str:
+async def reply(
+    Body: str = Form(),
+    From: str = Form(),
+    db: Session = Depends(get_db),
+) -> str:
     """Reply to a whatsapp message from the user."""
     # The generated text
     chat_response = get_response(Body)
+
+    logger.info("Received a message from the user")
+    logger.info(f"User message: {Body}")
 
     if chat_response is None:
         logger.error("Failed to get a response from the OpenAI API")
@@ -48,7 +52,7 @@ async def reply(Body: str = Form(), db: Session = Depends(get_db)) -> str:
     # Store the conversation in the database
     try:
         conversation = Conversation(
-            sender=TO_NUMBER,
+            sender=From,
             message=Body,
             response=chat_response,
         )
@@ -58,5 +62,5 @@ async def reply(Body: str = Form(), db: Session = Depends(get_db)) -> str:
     except SQLAlchemyError as e:
         db.rollback()
         logger.error(f"Error storing conversation in database: {e}")
-    send_message(TO_NUMBER, chat_response)
+    send_message(From, chat_response)
     return ""

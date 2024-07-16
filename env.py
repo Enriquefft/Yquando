@@ -22,6 +22,5 @@ PG_PASSWORD = get_required_env("PG_PASSWORD")
 TWILIO_ACCOUNT_SID = get_required_env("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = get_required_env("TWILIO_AUTH_TOKEN")
 TWILIO_NUMBER = get_required_env("TWILIO_NUMBER")
-TO_NUMBER = get_required_env("TO_NUMBER")
 
 OPENAI_API_KEY = get_required_env("OPENAI_API_KEY")

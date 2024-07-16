@@ -20,7 +20,7 @@ def send_message(to_number: str, body_text: str) -> None:
         message = client.messages.create(
             from_=f"whatsapp:{TWILIO_NUMBER}",
             body=body_text,
-            to=f"whatsapp:{to_number}",
+            to=to_number,
         )
         logger.info("Message sent to %s: %s", to_number, message.body)
     except Exception:
