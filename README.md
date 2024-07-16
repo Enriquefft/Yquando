@@ -1,2 +1,2 @@
-# Yquando
-Bot de whatsapp para YQuando, plataforma para conocer los tiempos y cantidades optimas de riego
+# hermes-retail-backend
+FastAPI backend for the Hermes Retail product
