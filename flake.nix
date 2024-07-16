@@ -14,6 +14,7 @@
 
     flakelight ./. {
       inputs.nixpkgs = nixpkgs;
+        nixpkgs.config = { allowUnfree=true; };
 
       withOverlays = [
         poetry2nix.overlays.default
@@ -40,7 +41,7 @@
 
           packages = [
             poetryPkgs
-            # pkgs.ruff
+            pkgs.ngrok
             pkgs.poetry
 
           ];

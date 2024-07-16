@@ -3,7 +3,9 @@
 # ruff: noqa: B008
 from typing import Generator
 
-from fastapi import Depends, FastAPI, Form
+from fastapi import Depends, FastAPI, Form, Request, status
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
@@ -34,10 +36,10 @@ def get_db() -> Generator[Session, None, None]:
 
 
 @app.post("/message")
-async def reply(body: str = Form(), db: Session = Depends(get_db)) -> str:
+async def reply(Body: str = Form(), db: Session = Depends(get_db)) -> str:
     """Reply to a whatsapp message from the user."""
     # The generated text
-    chat_response = get_response(body)
+    chat_response = get_response(Body)
 
     if chat_response is None:
         logger.error("Failed to get a response from the OpenAI API")
@@ -47,7 +49,7 @@ async def reply(body: str = Form(), db: Session = Depends(get_db)) -> str:
     try:
         conversation = Conversation(
             sender=TO_NUMBER,
-            message=body,
+            message=Body,
             response=chat_response,
         )
         db.add(conversation)
