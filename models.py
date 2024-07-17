@@ -6,7 +6,7 @@ from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 
 from env import PG_DATABASE, PG_HOST, PG_PASSWORD, PG_USER
 
-url = URL.create(
+db_url = URL.create(
     drivername="postgresql",
     username=PG_USER,
     password=PG_PASSWORD,
@@ -15,7 +15,7 @@ url = URL.create(
     port=5432,
 )
 
-engine = create_engine(url)
+engine = create_engine(db_url, pool_pre_ping=True, pool_recycle=300)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
 
